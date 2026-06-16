@@ -4,7 +4,7 @@ pipeline {
     environment {
         APP_NAME = 'manoranjan-portfolio'
         VERSION = '1.0.0'
-        NETLIFY_SITE_NAME = 'manoranjan-portfolio'
+        NETLIFY_SITE_NAME = 'manoranjan-cloud-portfolio-2025'  // ← UNIQUE NAME
     }
 
     stages {
@@ -37,7 +37,7 @@ pipeline {
             }
         }
 
-                stage('Prepare Deploy') {
+        stage('Prepare Deploy') {
             steps {
                 echo '========================================'
                 echo 'STAGE 4: Preparing files for Netlify...'
@@ -49,15 +49,15 @@ pipeline {
                     mkdir dist
                 '''
                 
-                // Copy index.html using copy (not xcopy)
+                // Copy index.html using COPY (not xcopy)
                 bat 'copy index.html dist\\index.html'
                 
-                // Copy assets folder
+                // Copy assets folder using xcopy
                 bat 'xcopy /E /I /Y assets dist\\assets\\'
                 
-                // Verify
+                // Verify files
                 bat 'dir dist\\'
-                bat 'dir dist\\assets\\css\\'
+                bat 'type dist\\index.html | findstr "<title>"'
             }
         }
 
@@ -94,7 +94,7 @@ pipeline {
             echo 'SUCCESS! Portfolio deployed to Netlify!'
             echo '========================================'
             echo 'Your live URL:'
-            echo 'https://manoranjan-portfolio.netlify.app'
+            echo 'https://manoranjan-cloud-portfolio-2025.netlify.app'
             echo '========================================'
         }
         failure {
