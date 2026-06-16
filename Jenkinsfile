@@ -1,42 +1,14 @@
 pipeline {
 
-    agent any
+```
+agent any
 
-    stages {
+stages {
 
-        stage('Checkout') {
-            steps {
-                echo 'Downloading source code...'
-            }
-        }
+    stage('Verify Project Structure') {
+        steps {
+            echo 'Checking project structure...'
 
-        stage('Verify Files') {
-            steps {
-                bat 'dir'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'Building Portfolio Project'
-            }
-        }
-
-        stage('Archive') {
-            steps {
-                archiveArtifacts artifacts: '*.html'
-            }
-        }
-    }
-
-    post {
-
-        success {
-            echo 'Build Successful'
-        }
-
-        failure {
-            echo 'Build Failed'
-        }
-    }
-}
+            bat 'if exist index.html echo index.html FOUND'
+            bat 'if exist assets\\css\\style.css echo style
+```
