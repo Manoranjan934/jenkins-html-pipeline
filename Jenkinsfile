@@ -4,7 +4,6 @@ pipeline {
     environment {
         APP_NAME = 'manoranjan-portfolio'
         VERSION = '1.0.0'
-        NETLIFY_SITE_NAME = 'manoranjan-cloud-portfolio-2025'  // ← UNIQUE NAME
     }
 
     stages {
@@ -43,21 +42,15 @@ pipeline {
                 echo 'STAGE 4: Preparing files for Netlify...'
                 echo '========================================'
                 
-                // Create clean dist folder
                 bat '''
                     if exist dist rmdir /S /Q dist
                     mkdir dist
                 '''
                 
-                // Copy index.html using COPY (not xcopy)
                 bat 'copy index.html dist\\index.html'
-                
-                // Copy assets folder using xcopy
                 bat 'xcopy /E /I /Y assets dist\\assets\\'
                 
-                // Verify files
                 bat 'dir dist\\'
-                bat 'type dist\\index.html | findstr "<title>"'
             }
         }
 
@@ -73,9 +66,7 @@ pipeline {
                         npm install -g netlify-cli
                         
                         echo Deploying to Netlify...
-                        netlify deploy --dir=dist --prod --site=%NETLIFY_SITE_NAME% --auth=%NETLIFY_AUTH_TOKEN%
-                        
-                        echo Deployment complete!
+                        netlify deploy --dir=dist --prod --auth=%NETLIFY_AUTH_TOKEN%
                     '''
                 }
             }
@@ -93,8 +84,7 @@ pipeline {
             echo '========================================'
             echo 'SUCCESS! Portfolio deployed to Netlify!'
             echo '========================================'
-            echo 'Your live URL:'
-            echo 'https://manoranjan-cloud-portfolio-2025.netlify.app'
+            echo 'Check the console output above for your live URL!'
             echo '========================================'
         }
         failure {
