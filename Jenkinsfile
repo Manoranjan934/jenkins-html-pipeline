@@ -37,23 +37,27 @@ pipeline {
             }
         }
 
-        stage('Prepare Deploy') {
+                stage('Prepare Deploy') {
             steps {
                 echo '========================================'
                 echo 'STAGE 4: Preparing files for Netlify...'
                 echo '========================================'
                 
-                // Create a clean dist folder with only website files
+                // Create clean dist folder
                 bat '''
                     if exist dist rmdir /S /Q dist
                     mkdir dist
-                    xcopy /E /I /Y index.html dist\\
-                    xcopy /E /I /Y assets dist\\assets\\
-                    echo Files prepared for deployment!
                 '''
                 
-                // Verify files are there
+                // Copy index.html using copy (not xcopy)
+                bat 'copy index.html dist\\index.html'
+                
+                // Copy assets folder
+                bat 'xcopy /E /I /Y assets dist\\assets\\'
+                
+                // Verify
                 bat 'dir dist\\'
+                bat 'dir dist\\assets\\css\\'
             }
         }
 
