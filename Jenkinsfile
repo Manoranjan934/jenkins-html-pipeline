@@ -1,94 +1,44 @@
 pipeline {
     agent any
 
-    environment {
-        APP_NAME = 'manoranjan-portfolio'
-        VERSION = '1.0.0'
-    }
-
     stages {
-
         stage('Checkout') {
             steps {
-                echo '========================================'
-                echo 'STAGE 1: Checking out source code...'
-                echo '========================================'
                 checkout scm
-                echo 'Code checked out successfully!'
             }
         }
-
+        
         stage('Build') {
             steps {
-                echo '========================================'
-                echo 'STAGE 2: Building application...'
-                echo '========================================'
-                bat 'echo Build step completed!'
+                bat 'echo Build OK'
             }
         }
-
+        
         stage('Test') {
             steps {
-                echo '========================================'
-                echo 'STAGE 3: Running tests...'
-                echo '========================================'
-                bat 'echo All tests passed!'
+                bat 'echo Test OK'
             }
         }
-
-        stage('Prepare Deploy') {
+        
+        stage('Prepare') {
             steps {
-                echo '========================================'
-                echo 'STAGE 4: Preparing files for Netlify...'
-                echo '========================================'
-                
                 bat '''
                     if exist dist rmdir /S /Q dist
                     mkdir dist
+                    copy index.html dist\\
+                    xcopy /E /I /Y assets dist\\assets\\
                 '''
-                
-                bat 'copy index.html dist\\index.html'
-                bat 'xcopy /E /I /Y assets dist\\assets\\'
-                
-                bat 'dir dist\\'
             }
         }
-
-        stage('Deploy to Netlify') {
+        
+        stage('Deploy') {
             steps {
-                echo '========================================'
-                echo 'STAGE 5: Deploying to Netlify...'
-                echo '========================================'
-                
-                withCredentials([string(credentialsId: 'netlify-token', variable: 'NETLIFY_AUTH_TOKEN')]) {
-                    bat '''
-                        echo Installing Netlify CLI...
-                        npm install -g netlify-cli
-                        
-                        echo Deploying to Netlify...
-                        netlify deploy --dir=dist --prod --auth=%NETLIFY_AUTH_TOKEN%
-                    '''
+                withCredentials([string(credentialsId: 'netlify-token', variable: 'TOKEN')]) {
+                    bat 'echo TOKEN IS SET'
+                    bat 'npm install -g netlify-cli'
+                    bat 'netlify deploy --dir=dist --prod --auth=%TOKEN%'
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            echo '========================================'
-            echo 'Pipeline finished!'
-            echo "Job: ${env.JOB_NAME}"
-            echo "Build: #${env.BUILD_NUMBER}"
-        }
-        success {
-            echo '========================================'
-            echo 'SUCCESS! Portfolio deployed to Netlify!'
-            echo '========================================'
-            echo 'Check the console output above for your live URL!'
-            echo '========================================'
-        }
-        failure {
-            echo 'FAILURE! Check logs above.'
         }
     }
 }
