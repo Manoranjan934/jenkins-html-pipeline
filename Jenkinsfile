@@ -34,11 +34,19 @@ pipeline {
         stage('Deploy') {
             steps {
                 withCredentials([string(credentialsId: 'netlify-token', variable: 'TOKEN')]) {
-                    bat 'echo TOKEN IS SET'
-                    bat 'npm install -g netlify-cli'
-                    bat 'netlify deploy --dir=dist --prod --auth=%TOKEN%'
+                    bat 'npm install netlify-cli'
+                    bat 'npx netlify deploy --dir=dist --prod --auth=%TOKEN%'
                 }
             }
+        }
+    }
+    
+    post {
+        success {
+            echo 'SUCCESS! Check console output above for live URL!'
+        }
+        failure {
+            echo 'FAILURE! Check logs above.'
         }
     }
 }
